@@ -4,7 +4,7 @@
 #include <conio.h> // Only works on Windows
 
 #define MAX_PATIENTS 100
-#define MAX_DOCTORS 6
+#define MAX_DOCTORS 9
 
 typedef struct {
     char username[20];
@@ -27,7 +27,12 @@ Doctor doctors[MAX_DOCTORS] = {
     {"Dr. Reza", "Neurologist", "Mon-Fri", 1200},
     {"Dr. Nila", "Pediatrician", "Wed-Fri", 900},
     {"Dr. Khan", "General", "Everyday", 500},
-    {"Dr. Zaman", "Orthopedic", "Tue-Sat", 1100}
+    {"Dr. Zaman", "Orthopedic", "Tue-Sat", 1100},
+    {"Dr. Tasnim", "Gastrologist", "Wed-Fri", 900},
+    {"Dr. Ahmed", "Chronologist ", "Everyday", 700},
+    {"Dr. Sazzad", "Costomologist", "Wed-Sat", 1000}
+
+
 };
 
 Appointment appointments[MAX_PATIENTS];

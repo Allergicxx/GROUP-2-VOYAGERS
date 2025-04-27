@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <conio.h> // Only works on Windows
+#include <conio.h> // For getch() - Windows only
 
 #define MAX_PATIENTS 100
 #define MAX_DOCTORS 9
@@ -11,7 +11,7 @@ typedef struct {
     int doctorIndex;
     char date[20];
     int isPaid;
-    char paymentMethod[30];
+    char paymentMethod[100];  // Store payment method or txn details
 } Appointment;
 
 typedef struct {
@@ -29,10 +29,8 @@ Doctor doctors[MAX_DOCTORS] = {
     {"Dr. Khan", "General", "Everyday", 500},
     {"Dr. Zaman", "Orthopedic", "Tue-Sat", 1100},
     {"Dr. Tasnim", "Gastrologist", "Wed-Fri", 900},
-    {"Dr. Ahmed", "Chronologist ", "Everyday", 700},
-    {"Dr. Sazzad", "Costomologist", "Wed-Sat", 1000}
-
-
+    {"Dr. Ahmed", "Chronologist", "Everyday", 700},
+    {"Dr. Sazzad", "Cosmetologist", "Wed-Sat", 1000}
 };
 
 Appointment appointments[MAX_PATIENTS];
@@ -174,9 +172,23 @@ void newAppointment(char username[]) {
     strcpy(appointments[appointmentCount].username, username);
     appointments[appointmentCount].doctorIndex = docIndex;
     appointments[appointmentCount].isPaid = 0;
-    strcpy(appointments[appointmentCount].paymentMethod, "Pay at Hospital");
+    strcpy(appointments[appointmentCount].paymentMethod, "Pending");
 
-    printf("Appointment booked. Please pay after visiting the doctor.\n");
+    int payChoice;
+    printf("\nChoose Payment Option:\n");
+    printf("1. Pay after visiting the doctor\n");
+    printf("2. Pay now via bKash (01851026072)\n");
+    printf("Enter choice: ");
+    scanf("%d", &payChoice);
+
+    if (payChoice == 2) {
+        processPayment(appointmentCount);
+    } else {
+        printf("You chose to pay after visiting the doctor.\n");
+    }
+
+    printf("Appointment booked successfully!\n");
+
     appointmentCount++;
 
     displayPatientDetails(username);
@@ -188,15 +200,16 @@ void checkAppointments(char username[]) {
     for (int i = 0; i < appointmentCount; i++) {
         if (strcmp(appointments[i].username, username) == 0) {
             int docIndex = appointments[i].doctorIndex;
-            printf("Doctor: %s | Date: %s | Payment Status: %s\n",
+            printf("Doctor: %s | Date: %s | Payment: %s\n",
                    doctors[docIndex].name,
                    appointments[i].date,
-                   appointments[i].isPaid ? "Paid" : "Please pay after visiting the doctor");
+                   appointments[i].isPaid ? appointments[i].paymentMethod : "Pending (Pay after visit or bKash)");
+
             if (!appointments[i].isPaid) {
-                int payChoice;
-                printf("Have you completed the payment? (1 = Yes / 0 = No): ");
-                scanf("%d", &payChoice);
-                if (payChoice == 1) {
+                int payNow;
+                printf("Do you want to pay now via bKash? (1 = Yes / 0 = No): ");
+                scanf("%d", &payNow);
+                if (payNow == 1) {
                     processPayment(i);
                 }
             }
@@ -211,8 +224,14 @@ void checkAppointments(char username[]) {
 }
 
 void processPayment(int index) {
+    char txnID[30];
+    printf("bKash Number: 01851026072\n");
+    printf("Enter your bKash Transaction ID: ");
+    scanf("%s", txnID);
+
     appointments[index].isPaid = 1;
-    printf("Payment marked as completed! Thank you.\n");
+    sprintf(appointments[index].paymentMethod, "Paid via bKash (TxnID: %s)", txnID);
+    printf("Payment successful! Recorded your transaction.\n");
 }
 
 void displayPatientDetails(char username[]) {
@@ -226,7 +245,8 @@ void displayPatientDetails(char username[]) {
             printf("Appointment %d:\n", found + 1);
             printf("  Doctor: %s (%s)\n", doctors[docIndex].name, doctors[docIndex].specialization);
             printf("  Date: %s\n", appointments[i].date);
-            printf("  Payment Status: %s\n", appointments[i].isPaid ? "Paid" : "Please pay after visiting the doctor");
+            printf("  Payment: %s\n",
+                   appointments[i].isPaid ? appointments[i].paymentMethod : "Pending (Pay after visit or bKash)");
             found++;
         }
     }
@@ -236,3 +256,4 @@ void displayPatientDetails(char username[]) {
     }
     printf("=========================\n");
 }
+
